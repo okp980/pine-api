@@ -2,11 +2,16 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from hashids import Hashids
 from django.conf import settings
+from django.utils import timezone
 
 # Create your models here.
 
 
 class User(AbstractUser):
+    username = None
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
+    email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+
     class Role(models.TextChoices):
         ADMIN = "ADMIN", "Admin"
         COMPANY_OWNER = "COMPANY_OWNER", "Company Owner"
@@ -16,6 +21,9 @@ class User(AbstractUser):
     role = models.CharField(
         max_length=20, choices=Role.choices, default=Role.INDIVIDUAL_DRIVER
     )
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["first_name", "last_name", "phone_number"]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

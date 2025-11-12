@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "auth_kit",
     "drf_spectacular",
     # apps
+    "core",
     "accounts",
 ]
 
@@ -140,3 +141,20 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+
+AUTH_KIT = {
+    "REGISTER_SERIALIZER": "accounts.serializers.CustomRegisterSerializer",
+    "LOGIN_REQUEST_SERIALIZER": "accounts.serializers.EmailorPhoneNumberLoginRequestSerializer",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "API",
+    "DESCRIPTION": "API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+ACCOUNT_EMAIL_VERIFICATION = "none"

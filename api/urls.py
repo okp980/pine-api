@@ -28,7 +28,7 @@ urlpatterns = [
     # docs
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
-        "docs/",
+        "swagger/",
         SpectacularSwaggerView.as_view(url_name="schema"),
         name="swagger-ui",
     ),
