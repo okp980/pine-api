@@ -207,7 +207,7 @@ class CommonProfile(models.Model):
         )
 
 
-class Profile(CommonProfile):
+class AdminProfile(CommonProfile):
     """
     Basic profile for non-driver users (e.g., admins).
     """
@@ -215,8 +215,8 @@ class Profile(CommonProfile):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="profile")
 
     class Meta:
-        verbose_name = "Profile"
-        verbose_name_plural = "Profiles"
+        verbose_name = "Admin Profile"
+        verbose_name_plural = "Admin Profiles"
         ordering = ["-created_at"]
 
 

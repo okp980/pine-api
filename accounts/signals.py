@@ -1,7 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db import transaction
-from .models import User, Company, Profile, DriverProfile
+from .models import User, Company, AdminProfile, DriverProfile
 import logging
 
 logger = logging.getLogger(__name__)
@@ -66,17 +66,17 @@ def create_driver_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def create_admin_profile(sender, instance, created, **kwargs):
     """
-    Create basic Profile for admin users.
+    Create basic AdminProfile for admin users.
 
-    This signal creates a basic Profile instance for users
+    This signal creates a basic AdminProfile instance for users
     with the ADMIN role.
     """
     if created and instance.role == User.Role.ADMIN:
         try:
             with transaction.atomic():
-                Profile.objects.get_or_create(user=instance)
+                AdminProfile.objects.get_or_create(user=instance)
                 logger.info(
-                    f"Profile created for admin user {instance.id} ({instance.email})"
+                    f"AdminProfile created for admin user {instance.id} ({instance.email})"
                 )
         except Exception as e:
             logger.error(f"Error creating profile for admin user {instance.id}: {e}")
