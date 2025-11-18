@@ -102,7 +102,7 @@ def handle_role_change(sender, instance, created, **kwargs):
 
                 if instance.role in driver_roles:
                     # These roles need DriverProfile
-                    if not hasattr(instance, "driverprofile"):
+                    if not hasattr(instance, "driver_profile"):
                         DriverProfile.objects.create(user=instance)
                         logger.info(
                             f"DriverProfile created for role change: user {instance.id}"
@@ -110,7 +110,7 @@ def handle_role_change(sender, instance, created, **kwargs):
 
                     # Create Company if user became a COMPANY_OWNER
                     if instance.role == User.Role.COMPANY_OWNER:
-                        if not hasattr(instance, "company"):
+                        if not hasattr(instance, "owned_company"):
                             Company.objects.create(
                                 owner=instance,
                                 name=f"{instance.first_name} {instance.last_name}'s Company",
