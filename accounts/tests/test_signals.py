@@ -1,6 +1,7 @@
 """
 Tests for signal handlers that auto-create related models.
 """
+
 from django.test import TestCase
 from accounts.models import User, Company, AdminProfile, DriverProfile
 
@@ -171,3 +172,15 @@ class SignalTests(TestCase):
         # Should not have company
         self.assertFalse(hasattr(user, "owned_company"))
 
+    def test_driver_profile_created_with_online_status_true(self):
+        """Test that newly created DriverProfile has is_online=True by default."""
+        user = User.objects.create_user(
+            email="newdriver@example.com",
+            password="testpass123",
+            role=User.Role.INDIVIDUAL_DRIVER,
+            phone_number="5555555555",
+        )
+
+        # DriverProfile should be created with is_online=True
+        self.assertTrue(hasattr(user, "driver_profile"))
+        self.assertTrue(user.driver_profile.is_online)

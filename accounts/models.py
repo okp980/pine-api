@@ -264,6 +264,7 @@ class DriverProfile(CommonProfile):
     user = models.OneToOneField(
         User, on_delete=models.CASCADE, related_name="driver_profile"
     )
+    is_online = models.BooleanField(default=True)
     license_number = models.CharField(max_length=64, blank=True)
     license_class = models.CharField(max_length=32, blank=True)
     license_expiry = models.DateField(null=True, blank=True)

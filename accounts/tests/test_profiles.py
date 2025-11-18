@@ -310,3 +310,147 @@ class DriverProfileTests(TestCase):
 
         self.assertTrue(hasattr(company_driver, "driver_profile"))
         self.assertIsInstance(company_driver.driver_profile, DriverProfile)
+
+    def test_is_online_default_value(self):
+        """Test that is_online defaults to True for new drivers."""
+        driver = User.objects.create_user(
+            email="newdriver@example.com",
+            password="testpass123",
+            role=User.Role.INDIVIDUAL_DRIVER,
+            phone_number="1112223333",
+        )
+
+        self.assertTrue(driver.driver_profile.is_online)
+
+    def test_set_driver_offline(self):
+        """Test setting driver status to offline."""
+        self.profile.is_online = False
+        self.profile.save()
+
+        self.profile.refresh_from_db()
+        self.assertFalse(self.profile.is_online)
+
+    def test_set_driver_online(self):
+        """Test setting driver status to online."""
+        # First set offline
+        self.profile.is_online = False
+        self.profile.save()
+
+        # Then set back online
+        self.profile.is_online = True
+        self.profile.save()
+
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.is_online)
+
+    def test_toggle_online_status(self):
+        """Test toggling driver online status multiple times."""
+        original_status = self.profile.is_online
+        self.assertTrue(original_status)
+
+        # Toggle off
+        self.profile.is_online = False
+        self.profile.save()
+        self.assertFalse(self.profile.is_online)
+
+        # Toggle on
+        self.profile.is_online = True
+        self.profile.save()
+        self.assertTrue(self.profile.is_online)
+
+    def test_multiple_drivers_different_online_status(self):
+        """Test that different drivers can have different online statuses."""
+        driver1 = User.objects.create_user(
+            email="driver1@example.com",
+            password="testpass123",
+            role=User.Role.INDIVIDUAL_DRIVER,
+            phone_number="1111111111",
+        )
+        driver2 = User.objects.create_user(
+            email="driver2@example.com",
+            password="testpass123",
+            role=User.Role.INDIVIDUAL_DRIVER,
+            phone_number="2222222222",
+        )
+
+        # Set different statuses
+        driver1.driver_profile.is_online = True
+        driver1.driver_profile.save()
+
+        driver2.driver_profile.is_online = False
+        driver2.driver_profile.save()
+
+        # Verify statuses are independent
+        driver1.driver_profile.refresh_from_db()
+        driver2.driver_profile.refresh_from_db()
+
+        self.assertTrue(driver1.driver_profile.is_online)
+        self.assertFalse(driver2.driver_profile.is_online)
+
+    def test_filter_online_drivers(self):
+        """Test filtering drivers by online status."""
+        # Create multiple drivers with different online statuses
+        online_drivers = []
+        offline_drivers = []
+
+        for i in range(3):
+            driver = User.objects.create_user(
+                email=f"online{i}@example.com",
+                password="testpass123",
+                role=User.Role.INDIVIDUAL_DRIVER,
+                phone_number=f"111111111{i}",
+            )
+            driver.driver_profile.is_online = True
+            driver.driver_profile.save()
+            online_drivers.append(driver)
+
+        for i in range(2):
+            driver = User.objects.create_user(
+                email=f"offline{i}@example.com",
+                password="testpass123",
+                role=User.Role.INDIVIDUAL_DRIVER,
+                phone_number=f"222222222{i}",
+            )
+            driver.driver_profile.is_online = False
+            driver.driver_profile.save()
+            offline_drivers.append(driver)
+
+        # Filter online drivers
+        online_profiles = DriverProfile.objects.filter(is_online=True)
+        offline_profiles = DriverProfile.objects.filter(is_online=False)
+
+        # Account for the initial driver in setUp
+        self.assertGreaterEqual(online_profiles.count(), 3)
+        self.assertGreaterEqual(offline_profiles.count(), 2)
+
+    def test_is_online_persists_after_other_updates(self):
+        """Test that is_online status persists when other fields are updated."""
+        # Set driver offline
+        self.profile.is_online = False
+        self.profile.save()
+
+        # Update other fields
+        self.profile.license_number = "DL999999"
+        self.profile.address = "456 New Street"
+        self.profile.save()
+
+        self.profile.refresh_from_db()
+
+        # Online status should still be False
+        self.assertFalse(self.profile.is_online)
+        self.assertEqual(self.profile.license_number, "DL999999")
+
+    def test_online_status_not_affected_by_verification(self):
+        """Test that marking driver as verified doesn't change online status."""
+        # Set driver offline
+        self.profile.is_online = False
+        self.profile.save()
+
+        # Mark as verified
+        self.profile.mark_verified()
+
+        self.profile.refresh_from_db()
+
+        # Should be verified but still offline
+        self.assertTrue(self.profile.verified)
+        self.assertFalse(self.profile.is_online)
