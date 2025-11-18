@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # apps
     "core",
     "accounts",
+    "vehicles",
 ]
 
 MIDDLEWARE = [
