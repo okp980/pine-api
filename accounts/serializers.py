@@ -74,14 +74,9 @@ class EmailorPhoneNumberLoginRequestSerializer(LoginRequestSerializer):
 
         if EMAIL_RE.match(ident):
             qs = User.objects.filter(email__iexact=ident)
-            print(qs, "email")
         else:
             qs = User.objects.filter(phone_number=normalize_phone(ident))
-            print(qs, "phone")
         user = qs.first()
-        print(user, "user")
-        print(user.password, "password")
-        print(password, "password")
         if not user or not user.check_password(password):
             raise serializers.ValidationError({"message": "Invalid credentials."})
 

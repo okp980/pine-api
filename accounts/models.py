@@ -45,13 +45,21 @@ class Company(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        hashids = Hashids(
-            salt=settings.SECRET_KEY,
-            min_length=12,
-            alphabet="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
-        )
-        self.invite_code = hashids.encode(self.id)
-        super().save(*args, **kwargs)
+        if not self.invite_code:  # Only generate if not already set
+            # Save first to get an ID
+            if not self.pk:
+                super().save(*args, **kwargs)
+
+            # Now generate the invite code with the ID
+            hashids = Hashids(
+                salt=settings.SECRET_KEY,
+                min_length=12,
+                alphabet="ABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+            )
+            self.invite_code = hashids.encode(self.id)
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
 
 class CompanyDriver(models.Model):
