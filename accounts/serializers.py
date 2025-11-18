@@ -1,7 +1,7 @@
 from auth_kit.serializers import RegisterSerializer
 from auth_kit.serializers.login_factors import LoginRequestSerializer
 from rest_framework import serializers
-from accounts.models import User
+from accounts.models import User, DriverProfile
 from rest_framework.validators import UniqueValidator
 from django.core.validators import RegexValidator
 import re
@@ -82,3 +82,9 @@ class EmailorPhoneNumberLoginRequestSerializer(LoginRequestSerializer):
 
         self.context["user"] = user
         return attrs
+
+
+class DriverOnlineStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DriverProfile
+        fields = ["is_online"]
