@@ -122,11 +122,11 @@ def handle_role_change(sender, instance, created, **kwargs):
                             )
 
                 elif instance.role == User.Role.ADMIN:
-                    # Admins need basic Profile
+                    # Admins need basic AdminProfile
                     if not hasattr(instance, "profile"):
-                        Profile.objects.create(user=instance)
+                        AdminProfile.objects.create(user=instance)
                         logger.info(
-                            f"Profile created for role change: user {instance.id}"
+                            f"AdminProfile created for role change: user {instance.id}"
                         )
         except Exception as e:
             logger.error(f"Error handling role change for user {instance.id}: {e}")
