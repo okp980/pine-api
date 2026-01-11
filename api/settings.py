@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "core",
     "accounts",
     "vehicles",
+    "trips",
 ]
 
 MIDDLEWARE = [

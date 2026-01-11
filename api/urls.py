@@ -36,4 +36,5 @@ urlpatterns = [
     # apps
     path("", include("accounts.urls")),
     path("", include("vehicles.urls")),
+    path("", include("trips.urls")),
 ]

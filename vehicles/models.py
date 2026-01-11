@@ -4,6 +4,13 @@ from accounts.models import User
 
 # Create your models here.
 class Vehicle(models.Model):
+    class Type(models.TextChoices):
+        CAR = "TRAILER TRUCK", "Trailer Truck"
+        MOTORCYCLE = "FLATBED TRUCK", "Flatbed Truck"
+        TRUCK = "SPECIAL TRUCK", "Special Truck"
+        BUS = "CONTAINER TRUCK", "Container Truck"
+
+    type = models.CharField(max_length=255, choices=Type.choices, default=Type.CAR)
     driver = models.ForeignKey(User, on_delete=models.CASCADE)
     brand = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
