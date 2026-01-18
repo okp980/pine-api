@@ -65,6 +65,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.common.CommonMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -103,6 +105,8 @@ DATABASES = {
     # read os.environ['DATABASE_URL']
     "extra": env.db_url("DATABASE_URL", default="sqlite:////tmp/my-tmp-sqlite.db"),
 }
+
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS")
 
 
 # Password validation
